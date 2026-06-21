@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Xitellar — Interactive Studio</title>
+<meta name="description" content="Xitellar is an interactive creative studio crafting immersive digital experiences, games, and motion design." />
+<meta name="theme-color" content="#080810" />
+<meta property="og:title" content="Xitellar — Interactive Studio" />
+<meta property="og:description" content="We craft immersive digital experiences, interactive media, and motion design." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://xitellar.github.io/" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<style>
+  /* ---------- THEME TOKENS ---------- */
+  :root, [data-theme="dark"]{
+    --bg:#080810;
+    --bg-soft:#0b0b15;
+    --text:#eef0f7;
+    --muted:#a4a4ba;
+    --glass:rgba(255,255,255,.05);
+    --glass-2:rgba(255,255,255,.08);
+    --glass-strong:rgba(20,20,34,.55);
+    --glass-border:rgba(255,255,255,.13);
+    --glass-border-hi:rgba(255,255,255,.28);
+    --glass-shadow:0 10px 40px rgba(0,0,0,.45);
+    --input-bg:rgba(255,255,255,.04);
+    --glow-a:.55;--glow-b:.42;--glow-c:.34;
+    --work-fade:rgba(6,6,12,.82);
+  }
+  [data-theme="light"]{
+    --bg:#eef0f7;
+    --bg-soft:#e7e9f2;
+    --text:#0d0d18;
+    --muted:#55576a;
+    --glass:rgba(255,255,255,.55);
+    --glass-2:rgba(255,255,255,.72);
+    --glass-strong:rgba(255,255,255,.62);
+    --glass-border:rgba(255,255,255,.8);
+    --glass-border-hi:rgba(124,92,255,.45);
+    --glass-shadow:0 10px 40px rgba(40,30,90,.12);
+    --input-bg:rgba(255,255,255,.6);
+    --glow-a:.30;--glow-b:.24;--glow-c:.20;
+    --work-fade:rgba(10,8,20,.72);
+  }
+  :root{
+    --accent:#6A0DAD;--accent-2:#007BFF;--accent-3:#E00EE0;
+    --grad:linear-gradient(120deg,#007BFF,#6A0DAD 52%,#E00EE0);
+    --radius:22px;--maxw:1180px;
+    --blur:saturate(150%) blur(22px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+  h1,h2,h3,.brand,.eyebrow,.btn{font-family:'Space Grotesk',sans-serif}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  section{position:relative;z-index:1}
+
+  /* layered ambient glows — the backdrop the glass sits on */
+  .glow{position:fixed;border-radius:50%;filter:blur(130px);z-index:0;pointer-events:none;transition:opacity .4s}
+  .glow.a{width:560px;height:560px;background:#007BFF;top:-140px;left:-100px;opacity:var(--glow-a)}
+  .glow.b{width:520px;height:520px;background:#6A0DAD;top:34%;right:-160px;opacity:var(--glow-b)}
+  .glow.c{width:480px;height:480px;background:#E00EE0;bottom:-160px;left:26%;opacity:var(--glow-c)}
+  .glow.d{width:360px;height:360px;background:#007BFF;bottom:8%;right:18%;opacity:calc(var(--glow-a) * .5)}
+
+  /* glass utility */
+  .glass{background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow)}
+
+  /* NAV */
+  header{position:fixed;inset:0 0 auto 0;z-index:50;transition:padding .3s}
+  .nav-inner{margin:14px auto 0;max-width:calc(var(--maxw) + 0px);display:flex;align-items:center;justify-content:space-between;height:62px;padding:0 22px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);transition:background .3s}
+  .nav-wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .brand{font-weight:700;font-size:1.3rem;letter-spacing:.5px;display:flex;align-items:center;gap:10px}
+  .brand .logo-x{width:28px;height:28px;display:block}
+  .nav-right{display:flex;align-items:center;gap:20px}
+  .navlinks{display:flex;gap:28px;align-items:center}
+  .navlinks a{color:var(--muted);font-size:.93rem;font-weight:500;transition:color .2s}
+  .navlinks a:hover{color:var(--text)}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.92rem;padding:11px 20px;border-radius:999px;cursor:pointer;border:0;transition:transform .2s,box-shadow .2s}
+  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 8px 28px rgba(106,13,173,.4)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(106,13,173,.55)}
+  .btn-glass{background:var(--glass-2);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);color:var(--text)}
+  .btn-glass:hover{border-color:var(--glass-border-hi)}
+  /* minimal borderless toggle */
+  .theme-toggle{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.05rem;padding:4px;line-height:1;transition:color .2s,transform .3s}
+  .theme-toggle:hover{color:var(--text);transform:rotate(18deg)}
+  .theme-toggle .sun{display:none}
+  [data-theme="light"] .theme-toggle .sun{display:inline}
+  [data-theme="light"] .theme-toggle .moon{display:none}
+  .menu-btn{display:none;background:none;border:0;color:var(--text);font-size:1.5rem;cursor:pointer}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;align-items:center;padding-top:90px}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:.78rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent-2);padding:9px 17px;border-radius:999px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);margin-bottom:28px}
+  .eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 0 0 rgba(0,123,255,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,123,255,.55)}70%{box-shadow:0 0 0 12px rgba(0,123,255,0)}100%{box-shadow:0 0 0 0 rgba(0,123,255,0)}}
+  .hero h1{font-size:clamp(2.7rem,6.5vw,5.2rem);line-height:1.03;font-weight:700;letter-spacing:-1.5px;max-width:15ch}
+  .hero h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lead{margin-top:26px;font-size:clamp(1.05rem,2vw,1.3rem);color:var(--muted);max-width:54ch}
+  .hero-cta{margin-top:38px;display:flex;gap:14px;flex-wrap:wrap}
+  .stats{margin-top:56px;display:flex;gap:16px;flex-wrap:wrap}
+  .stat{padding:18px 26px;border-radius:18px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border)}
+  .stat .num{font-family:'Space Grotesk';font-size:1.9rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat .lbl{color:var(--muted);font-size:.85rem}
+
+  /* section heads */
+  .sec{padding:120px 0}
+  .sec-head{max-width:640px;margin-bottom:56px}
+  .sec-head h2{font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-1px;line-height:1.1}
+  .sec-head p{color:var(--muted);margin-top:16px;font-size:1.08rem}
+  .eyebrow.mb{margin-bottom:18px}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+  .about-copy .h2-inline{font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-1px;margin:18px 0 22px;font-family:'Space Grotesk'}
+  .about-copy p{color:var(--muted);font-size:1.05rem;margin-bottom:18px}
+  .about-copy strong{color:var(--text)}
+  .pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .pill{padding:9px 16px;border-radius:999px;font-size:.86rem;color:var(--text);background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border)}
+  .about-visual{position:relative;height:420px;border-radius:var(--radius);overflow:hidden;display:grid;place-items:center;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow)}
+  .orbit{position:relative;width:240px;height:240px}
+  .orbit .core{position:absolute;inset:0;margin:auto;width:108px;height:108px;display:grid;place-items:center;animation:float 6s ease-in-out infinite;filter:drop-shadow(0 0 40px rgba(106,13,173,.5))}
+  .orbit .core svg{width:108px;height:108px}
+  .orbit .ring{position:absolute;inset:0;border:1px solid var(--glass-border);border-radius:50%;animation:spin 14s linear infinite}
+  .orbit .ring:nth-child(2){inset:30px;animation-duration:10s;animation-direction:reverse}
+  .orbit .ring:nth-child(3){inset:60px;animation-duration:7s}
+  .orbit .sat{position:absolute;top:-6px;left:50%;width:13px;height:13px;border-radius:50%}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes float{0%,100%{transform:translateY(-8px)}50%{transform:translateY(8px)}}
+
+  /* SERVICES */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .card{padding:32px 28px;border-radius:var(--radius);background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);transition:transform .3s,border-color .3s,background .3s;position:relative;overflow:hidden}
+  .card::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)}
+  .card:hover{transform:translateY(-6px);border-color:var(--glass-border-hi);background:var(--glass-2)}
+  .card .ico{width:54px;height:54px;border-radius:15px;display:grid;place-items:center;font-size:1.5rem;background:var(--glass-2);border:1px solid var(--glass-border);margin-bottom:22px}
+  .card h3{font-size:1.22rem;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:.97rem}
+
+  /* WORK */
+  .work-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  .work{position:relative;border-radius:var(--radius);overflow:hidden;min-height:300px;border:1px solid var(--glass-border);display:flex;flex-direction:column;justify-content:flex-end;padding:28px;cursor:pointer;transition:transform .3s;box-shadow:var(--glass-shadow)}
+  .work:hover{transform:translateY(-4px)}
+  .work .bg{position:absolute;inset:0;z-index:0;transition:transform .5s}
+  .work:hover .bg{transform:scale(1.06)}
+  .work .bg.w1{background:linear-gradient(135deg,#001a3d,#007BFF,#6A0DAD)}
+  .work .bg.w2{background:linear-gradient(135deg,#0a0a1a,#6A0DAD,#007BFF)}
+  .work .bg.w3{background:linear-gradient(135deg,#3d0033,#E00EE0,#6A0DAD)}
+  .work .bg.w4{background:linear-gradient(135deg,#1a0033,#6A0DAD,#E00EE0)}
+  .work .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,var(--work-fade))}
+  .work .meta{position:relative;z-index:1;padding:16px 18px;border-radius:16px;background:rgba(10,10,20,.32);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);align-self:flex-start}
+  .work .tag{font-size:.74rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.85)}
+  .work h3{font-size:1.35rem;margin-top:4px;color:#fff}
+
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:start}
+  .contact-info .h2-inline{font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-1px;line-height:1.1;margin:18px 0;font-family:'Space Grotesk'}
+  .contact-info p{color:var(--muted);font-size:1.06rem;margin-bottom:28px}
+  .contact-line{display:flex;align-items:center;gap:14px;margin-bottom:14px;color:var(--text)}
+  .contact-line .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border)}
+  form{padding:34px;border-radius:var(--radius);background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow)}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:.84rem;color:var(--muted);margin-bottom:8px}
+  .field input,.field textarea{width:100%;background:var(--input-bg);border:1px solid var(--glass-border);border-radius:13px;padding:13px 15px;color:var(--text);font-family:inherit;font-size:.97rem;transition:border-color .2s}
+  .field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--accent-2)}
+  .field textarea{resize:vertical;min-height:120px}
+  form .btn-primary{width:100%;justify-content:center}
+  .form-note{margin-top:14px;font-size:.84rem;color:var(--muted);text-align:center}
+
+  /* socials */
+  .socials{display:flex;gap:12px}
+  .socials a{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);color:var(--muted);font-size:1.05rem;transition:all .2s}
+  .socials a:hover{color:var(--text);border-color:var(--glass-border-hi);transform:translateY(-3px)}
+
+  /* FOOTER */
+  footer{padding:46px 0 40px;position:relative;z-index:1;margin-top:30px}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding-top:34px;border-top:1px solid var(--glass-border)}
+  .foot .copy{color:var(--muted);font-size:.88rem}
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  .mobile-menu{display:none;position:fixed;inset:92px 16px auto 16px;z-index:49;border-radius:20px;background:var(--glass-strong);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);padding:20px;flex-direction:column;gap:14px}
+  .mobile-menu a{color:var(--text);font-size:1.05rem;padding:6px 2px}
+  .mobile-menu.open{display:flex}
+
+  @media(max-width:900px){
+    .about-grid,.contact-grid{grid-template-columns:1fr;gap:40px}
+    .cards{grid-template-columns:1fr 1fr}
+    .navlinks,.nav-right .btn-glass{display:none}
+    .menu-btn{display:block}
+    .sec{padding:90px 0}
+  }
+  @media(max-width:620px){
+    .cards,.work-grid{grid-template-columns:1fr}
+    .hero{padding-top:120px}
+  }
+</style>
+</head>
+<body>
+  <!-- reusable pixel-X logo symbol (9 sharp gradient cubes, corner-to-corner) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="lx0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6CC4FF"/><stop offset=".5" stop-color="#2E86FF"/><stop offset="1" stop-color="#1240C8"/></linearGradient>
+      <linearGradient id="lx1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DB5CF0"/><stop offset=".5" stop-color="#A22ED8"/><stop offset="1" stop-color="#6A0DAD"/></linearGradient>
+      <linearGradient id="lx2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4FA6FF"/><stop offset=".5" stop-color="#2A6EF5"/><stop offset="1" stop-color="#143CC0"/></linearGradient>
+      <linearGradient id="lx3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B45CF0"/><stop offset=".5" stop-color="#7E28D8"/><stop offset="1" stop-color="#520F9E"/></linearGradient>
+      <linearGradient id="lx4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4F8DFF"/><stop offset=".5" stop-color="#5A3FE0"/><stop offset="1" stop-color="#6A1FC0"/></linearGradient>
+      <linearGradient id="lx5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4AABFF"/><stop offset=".5" stop-color="#2360E8"/><stop offset="1" stop-color="#122EA8"/></linearGradient>
+      <linearGradient id="lx6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C24FE8"/><stop offset=".5" stop-color="#8E22CC"/><stop offset="1" stop-color="#5A0DA0"/></linearGradient>
+      <linearGradient id="lx7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5BB8FF"/><stop offset=".5" stop-color="#2A72FF"/><stop offset="1" stop-color="#0E2EB0"/></linearGradient>
+      <linearGradient id="lx8" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E060E0"/><stop offset=".5" stop-color="#B028D0"/><stop offset="1" stop-color="#6A0DAD"/></linearGradient>
+    </defs>
+    <symbol id="logoX" viewBox="0 0 100 100">
+      <rect x="0"  y="0"  width="20" height="20" fill="url(#lx0)"/>
+      <rect x="80" y="0"  width="20" height="20" fill="url(#lx1)"/>
+      <rect x="20" y="20" width="20" height="20" fill="url(#lx2)"/>
+      <rect x="60" y="20" width="20" height="20" fill="url(#lx3)"/>
+      <rect x="40" y="40" width="20" height="20" fill="url(#lx4)"/>
+      <rect x="20" y="60" width="20" height="20" fill="url(#lx5)"/>
+      <rect x="60" y="60" width="20" height="20" fill="url(#lx6)"/>
+      <rect x="0"  y="80" width="20" height="20" fill="url(#lx7)"/>
+      <rect x="80" y="80" width="20" height="20" fill="url(#lx8)"/>
+    </symbol>
+  </svg>
+
+  <div class="glow a"></div><div class="glow b"></div><div class="glow c"></div><div class="glow d"></div>
+
+  <header id="header">
+    <div class="nav-wrap">
+      <div class="nav-inner" id="navInner">
+        <a href="#home" class="brand"><svg class="logo-x"><use href="#logoX"/></svg>xitellar</a>
+        <div class="nav-right">
+          <nav class="navlinks">
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#work">Work</a>
+            <a href="#contact">Contact</a>
+          </nav>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+            <i class="fa-regular fa-moon moon"></i><i class="fa-regular fa-sun sun"></i>
+          </button>
+          <a href="#contact" class="btn btn-glass">Start a project</a>
+          <button class="menu-btn" id="menuBtn" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="wrap">
+      <span class="eyebrow reveal"><span class="pulse"></span>Interactive Creative Studio</span>
+      <h1 class="reveal">We build <span class="grad">interactive worlds</span> people remember.</h1>
+      <p class="lead reveal">Xitellar is a creative studio crafting immersive digital experiences — from real-time visuals and games to interactive websites and motion design that move people.</p>
+      <div class="hero-cta reveal">
+        <a href="#contact" class="btn btn-primary">Start a project →</a>
+        <a href="#work" class="btn btn-glass">See our work</a>
+      </div>
+      <div class="stats reveal">
+        <div class="stat"><div class="num" data-target="60">0</div><div class="lbl">Projects shipped</div></div>
+        <div class="stat"><div class="num" data-target="24">0</div><div class="lbl">Happy clients</div></div>
+        <div class="stat"><div class="num" data-target="9">0</div><div class="lbl">Industry awards</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="sec" id="about">
+    <div class="wrap about-grid">
+      <div class="about-copy reveal">
+        <span class="eyebrow"><span class="pulse"></span>About us</span>
+        <div class="h2-inline">A studio where design meets code.</div>
+        <p>We're a small team of designers, developers and motion artists obsessed with the intersection of <strong>art and technology</strong>. Every project starts with a question: how do we make people <strong>feel</strong> something?</p>
+        <p>From interactive installations to playful product sites, we blend striking visual design with engineering precision to ship experiences that perform as good as they look.</p>
+        <div class="pill-row">
+          <span class="pill">Creative direction</span>
+          <span class="pill">Interaction design</span>
+          <span class="pill">Real-time 3D</span>
+          <span class="pill">Motion</span>
+          <span class="pill">Front-end</span>
+        </div>
+      </div>
+      <div class="about-visual reveal">
+        <div class="orbit">
+          <div class="ring"><span class="sat" style="background:var(--accent-2);box-shadow:0 0 16px var(--accent-2)"></span></div>
+          <div class="ring"><span class="sat" style="background:var(--accent-3);box-shadow:0 0 16px var(--accent-3)"></span></div>
+          <div class="ring"><span class="sat" style="background:var(--accent);box-shadow:0 0 16px var(--accent)"></span></div>
+          <div class="core"><svg><use href="#logoX"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="sec" id="services">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow mb"><span class="pulse"></span>What we do</span>
+        <h2>Services built for the interactive web.</h2>
+        <p>End-to-end — from the first sketch to the final pixel and every interaction in between.</p>
+      </div>
+      <div class="cards">
+        <div class="card reveal"><div class="ico">🎮</div><h3>Interactive Experiences</h3><p>Games, WebGL scenes, and real-time installations that turn visitors into players.</p></div>
+        <div class="card reveal"><div class="ico">🌐</div><h3>Web Design & Build</h3><p>High-craft websites and product UIs engineered for speed, motion, and conversion.</p></div>
+        <div class="card reveal"><div class="ico">🎬</div><h3>Motion & Animation</h3><p>Brand films, UI animation, and micro-interactions that bring interfaces to life.</p></div>
+        <div class="card reveal"><div class="ico">🧊</div><h3>Real-time 3D</h3><p>Configurators, product viewers, and immersive 3D worlds running in the browser.</p></div>
+        <div class="card reveal"><div class="ico">✨</div><h3>Brand & Identity</h3><p>Visual systems, logos, and design languages built to scale across every screen.</p></div>
+        <div class="card reveal"><div class="ico">⚙️</div><h3>Creative Engineering</h3><p>Custom tools, generative systems, and the tricky technical bits others avoid.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="sec" id="work">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow mb"><span class="pulse"></span>Selected work</span>
+        <h2>Things we've made.</h2>
+        <p>A glimpse of recent projects across games, brands, and the interactive web.</p>
+      </div>
+      <div class="work-grid">
+        <div class="work reveal"><div class="bg w1"></div><div class="meta"><span class="tag">WebGL · Game</span><h3>Neon Drift</h3></div></div>
+        <div class="work reveal"><div class="bg w2"></div><div class="meta"><span class="tag">Product · 3D</span><h3>Aurora Configurator</h3></div></div>
+        <div class="work reveal"><div class="bg w3"></div><div class="meta"><span class="tag">Brand · Motion</span><h3>Pulse Identity</h3></div></div>
+        <div class="work reveal"><div class="bg w4"></div><div class="meta"><span class="tag">Web · Interactive</span><h3>Lumen Launch</h3></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="sec" id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-info reveal">
+        <span class="eyebrow"><span class="pulse"></span>Get in touch</span>
+        <div class="h2-inline">Let's build something interactive.</div>
+        <p>Have a project in mind, or just want to say hi? We'd love to hear from you. Tell us what you're dreaming up and we'll get back within a day.</p>
+        <div class="contact-line"><span class="ic"><i class="fa-regular fa-envelope"></i></span> hello@xitellar.com</div>
+        <div class="contact-line"><span class="ic"><i class="fa-solid fa-location-dot"></i></span> Remote · Worldwide</div>
+        <div class="contact-line"><span class="ic"><i class="fa-regular fa-clock"></i></span> Mon–Fri · Replies within 24h</div>
+        <div class="socials" style="margin-top:26px">
+          <a href="https://x.com/xitellar" target="_blank" rel="noopener" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="https://www.instagram.com/xitellar" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.youtube.com/@Xitellar" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="https://www.facebook.com/xitellar" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.twitch.tv/xitellar" target="_blank" rel="noopener" aria-label="Twitch"><i class="fa-brands fa-twitch"></i></a>
+        </div>
+      </div>
+      <form class="reveal" id="contactForm" onsubmit="return handleSubmit(event)">
+        <div class="field"><label for="name">Name</label><input id="name" name="name" type="text" placeholder="Your name" required /></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" placeholder="you@email.com" required /></div>
+        <div class="field"><label for="message">Project details</label><textarea id="message" name="message" placeholder="Tell us about your project…" required></textarea></div>
+        <button type="submit" class="btn btn-primary">Send message →</button>
+        <p class="form-note" id="formNote">We'll never share your details.</p>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot">
+      <a href="#home" class="brand"><svg class="logo-x"><use href="#logoX"/></svg>xitellar</a>
+      <div class="socials">
+        <a href="https://x.com/xitellar" target="_blank" rel="noopener" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.instagram.com/xitellar" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@Xitellar" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="https://www.facebook.com/xitellar" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://www.twitch.tv/xitellar" target="_blank" rel="noopener" aria-label="Twitch"><i class="fa-brands fa-twitch"></i></a>
+      </div>
+      <div class="copy">© <span id="year"></span> Xitellar. All rights reserved.</div>
+    </div>
+  </footer>
+
+<script>
+  (function(){
+    var saved=null; try{ saved=localStorage.getItem('xitellar-theme'); }catch(e){}
+    if(saved){ document.documentElement.setAttribute('data-theme',saved); }
+    var meta=document.querySelector('meta[name="theme-color"]');
+    function syncMeta(){var t=document.documentElement.getAttribute('data-theme'); if(meta) meta.setAttribute('content', t==='light' ? '#eef0f7' : '#080810');}
+    syncMeta();
+    document.getElementById('themeToggle').addEventListener('click',function(){
+      var cur=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+      document.documentElement.setAttribute('data-theme',cur);
+      try{ localStorage.setItem('xitellar-theme',cur); }catch(e){}
+      syncMeta();
+    });
+  })();
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var menuBtn=document.getElementById('menuBtn'), mobileMenu=document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click',function(){ mobileMenu.classList.toggle('open'); });
+  mobileMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ mobileMenu.classList.remove('open'); }); });
+
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el,i){ el.style.transitionDelay=(i%4*0.07)+'s'; io.observe(el); });
+
+  var cio=new IntersectionObserver(function(entries){entries.forEach(function(e){
+    if(!e.isIntersecting) return;
+    var el=e.target, target=+el.dataset.target, n=0, step=Math.max(1,Math.round(target/40));
+    var t=setInterval(function(){ n+=step; if(n>=target){ n=target; clearInterval(t);} el.textContent=n+(target>=60?'+':''); },30);
+    cio.unobserve(el);
+  });},{threshold:0.6});
+  document.querySelectorAll('.num').forEach(function(c){ cio.observe(c); });
+
+  function handleSubmit(e){
+    e.preventDefault();
+    var note=document.getElementById('formNote');
+    note.textContent="Thanks! This is a demo form — connect it to email or Formspree to receive messages.";
+    note.style.color="#007BFF";
+    e.target.reset();
+    return false;
+  }
+</script>
+</body>
+</html>
